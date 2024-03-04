@@ -3,7 +3,7 @@
 Consumes Rick and Morty API and returns a list of characters in cards.
 
 - [x] Shows img, name, status, species, type
-- [ ] Pagination
+- [x] Pagination
 
 # /form Route
 

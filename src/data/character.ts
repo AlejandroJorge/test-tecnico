@@ -27,20 +27,32 @@ interface Character {
   type: string;
 }
 
-async function fetchCharacters(): Promise<Character[]> {
-  return fetch(`https://rickandmortyapi.com/api/character`)
+interface CharactersResponse {
+  prevLink?: string;
+  nextLink?: string;
+  totalPages: number;
+  characters: Character[];
+}
+
+async function fetchCharacters(page: number): Promise<CharactersResponse> {
+  return fetch(`https://rickandmortyapi.com/api/character?page=${page}`)
     .then((response) => response.json())
-    .then((data) =>
-      data.results.map((character: APICharacter): Character => {
-        return {
-          img: character.image,
-          name: character.name,
-          status: character.status,
-          species: character.species,
-          type: character.type,
-        };
-      }),
-    );
+    .then((data) => {
+      return {
+        prevLink: data.info.prev,
+        nextLink: data.info.next,
+        totalPages: data.info.pages,
+        characters: data.results.map((character: APICharacter): Character => {
+          return {
+            img: character.image,
+            name: character.name,
+            status: character.status,
+            species: character.species,
+            type: character.type,
+          };
+        }),
+      };
+    });
 }
 
 export type { Character };
