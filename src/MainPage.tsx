@@ -65,7 +65,7 @@ function CharacterCard({ character }: { character: Character }) {
     <Card
       title={character.name}
       header={header}
-      style={{ minWidth: "15rem", maxWidth: "15rem" }}
+      style={{ minWidth: "15rem", maxWidth: "15rem", minHeight: "32rem" }}
     >
       <p>Status: {character.status}</p>
       <p>Species: {character.species}</p>
