@@ -3,9 +3,7 @@ import { fetchCharacters, type Character } from "./data/character";
 import { Card } from "primereact/card";
 
 function MainPage() {
-  const { isLoading, error, data } = useQuery("characters", () =>
-    fetchCharacters(),
-  );
+  const { isLoading, error, data } = useQuery("characters", fetchCharacters);
 
   if (isLoading) return <div>Loading...</div>;
 

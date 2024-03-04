@@ -58,7 +58,7 @@ function FormPage() {
 
     show("success", "Success", "Form submitted");
 
-    const previousData = JSON.parse(localStorage.getItem("form") || "[]");
+    const previousData = JSON.parse(localStorage.getItem("users") || "[]");
     localStorage.setItem("users", JSON.stringify([...previousData, data]));
   };
   return (
