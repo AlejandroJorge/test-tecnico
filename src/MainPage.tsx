@@ -44,6 +44,7 @@ const Container = styled.div`
   justify-content: center;
   max-width: 75%;
   margin: auto;
+  gap: 1rem;
 `;
 
 export default MainPage;
