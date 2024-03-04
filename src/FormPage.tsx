@@ -5,21 +5,17 @@ import { Toast } from "primereact/toast";
 import { useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-type Inputs = {
-  name: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  date: Date;
-};
+import { v4 as uuidv4 } from "uuid";
+import { User } from "./data/user";
 
 function FormPage() {
-  const { register, handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<User>();
 
   const toast = useRef(null);
 
   const show = (severity: string, summary: string, detail: string) => {
     if (toast.current) {
+      //@ts-ignore
       toast.current.show({
         severity,
         summary: summary,
@@ -29,7 +25,7 @@ function FormPage() {
     }
   };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<User> = (data) => {
     if (
       data.name === "" ||
       data.lastName === "" ||
@@ -56,10 +52,13 @@ function FormPage() {
       return;
     }
 
-    show("success", "Success", "Form submitted");
+    const uuid = uuidv4();
+    const user = { ...data, uuid };
 
     const previousData = JSON.parse(localStorage.getItem("users") || "[]");
-    localStorage.setItem("users", JSON.stringify([...previousData, data]));
+    localStorage.setItem("users", JSON.stringify([...previousData, user]));
+
+    show("success", "Success", "Form submitted");
   };
   return (
     <>

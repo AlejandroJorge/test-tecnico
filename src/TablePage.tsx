@@ -24,6 +24,7 @@ function TablePage() {
         <Button label="Search" />
       </form>
       <DataTable value={data}>
+        <Column field="uuid" header="UUID" />
         <Column field="name" header="Name" />
         <Column field="lastName" header="Last Name" />
         <Column field="phone" header="Phone" />
