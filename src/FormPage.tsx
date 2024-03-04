@@ -8,6 +8,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "./data/user";
 
+import styled from "styled-components";
+
 function FormPage() {
   const { register, handleSubmit } = useForm<User>();
 
@@ -63,30 +65,25 @@ function FormPage() {
   return (
     <>
       <FormContainer>
-        <form
-          style={{
-            padding: "2rem",
-            border: "2px solid gray",
-            borderRadius: "1rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-          }}
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <InputWrapper label="name">
+        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          <InputWrapper>
+            <label htmlFor="name">name:</label>
             <InputText placeholder={"Pepito"} {...register("name")} />
           </InputWrapper>
-          <InputWrapper label="lastName">
+          <InputWrapper>
+            <label htmlFor="lastName">last name:</label>
             <InputText placeholder={"Ramirez"} {...register("lastName")} />
           </InputWrapper>
-          <InputWrapper label="phone">
+          <InputWrapper>
+            <label htmlFor="phone">phone:</label>
             <InputText placeholder={"999999999"} {...register("phone")} />
           </InputWrapper>
-          <InputWrapper label="email">
+          <InputWrapper>
+            <label htmlFor="email">email:</label>
             <InputText placeholder={"some@email.com"} {...register("email")} />
           </InputWrapper>
-          <InputWrapper label="date">
+          <InputWrapper>
+            <label htmlFor="date">date:</label>
             <Calendar {...register("date")} />
           </InputWrapper>
           <Button
@@ -94,42 +91,37 @@ function FormPage() {
             label="Submit"
             type="submit"
           />
-        </form>
+        </StyledForm>
       </FormContainer>
       <Toast ref={toast} />
     </>
   );
 }
 
-const InputWrapper = ({
-  label,
-  children,
-}: {
-  label: string;
-  children: any;
-}) => (
-  <div style={{ display: "flex", flexDirection: "column" }}>
-    <label style={{ textTransform: "uppercase" }} htmlFor={label}>
-      {label}
-    </label>
-    {children}
-  </div>
-);
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  label {
+    text-transform: uppercase;
+  }
+`;
 
-const FormContainer = ({ children }: { children: any }) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-      maxWidth: "50%",
-      margin: "auto",
-      minHeight: "100vh",
-      justifyContent: "center",
-    }}
-  >
-    {children}
-  </div>
-);
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 50%;
+  margin: auto;
+  justify-content: center;
+`;
+
+const StyledForm = styled.form`
+  padding: 2rem;
+  border: 2px solid gray;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
 
 export default FormPage;

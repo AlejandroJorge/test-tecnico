@@ -22,7 +22,7 @@ Displays the user input stored in localstorage in a table format with a search b
 
 # Extra objectives
 
-- [ ] styled-components
-- [ ] date-fns
+- [x] styled-components
+- [x] date-fns
 - [ ] axios
 - [x] react-query

@@ -9,6 +9,8 @@ import { getUsers } from "./data/user";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 
+import styled from "styled-components";
+
 function TablePage() {
   const [name, setName] = useState("");
   const { data, refetch } = useQuery("users", () => getUsers(name));
@@ -43,21 +45,12 @@ function TablePage() {
   );
 }
 
-function Container({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        gap: "1rem",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+`;
 
 export default TablePage;

@@ -2,6 +2,8 @@ import { useQuery } from "react-query";
 import { fetchCharacters, type Character } from "./data/character";
 import { Card } from "primereact/card";
 
+import styled from "styled-components";
+
 function MainPage() {
   const { isLoading, error, data } = useQuery("characters", fetchCharacters);
 
@@ -11,22 +13,11 @@ function MainPage() {
 
   return (
     <>
-      {
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            maxWidth: "75%",
-            margin: "auto",
-          }}
-        >
-          {data?.map((character, idx) => (
-            <CharacterCard key={idx} character={character} />
-          ))}
-        </div>
-      }
+      <Container>
+        {data?.map((character, idx) => (
+          <CharacterCard key={idx} character={character} />
+        ))}
+      </Container>
     </>
   );
 }
@@ -46,5 +37,13 @@ function CharacterCard({ character }: { character: Character }) {
     </Card>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 75%;
+  margin: auto;
+`;
 
 export default MainPage;
