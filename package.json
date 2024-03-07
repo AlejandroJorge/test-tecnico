@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "async-executor-hook": "^0.1.6",
     "date-fns": "^3.3.1",
     "primereact": "^10.5.1",
     "react": "^18.2.0",
@@ -17,6 +18,8 @@
     "react-hook-form": "^7.51.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.22.2",
+    "rectangular-forms": "^1.0.27",
+    "rxjs": "^7.8.1",
     "styled-components": "^6.1.8",
     "uuid": "^9.0.1"
   },
