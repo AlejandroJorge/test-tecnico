@@ -1,104 +1,152 @@
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { InputText } from "primereact/inputtext";
-import { Toast } from "primereact/toast";
-import { useRef } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect } from "react";
 
 import { v4 as uuidv4 } from "uuid";
-import { User } from "./data/user";
+import { User, addUser } from "./data/user";
 
 import styled from "styled-components";
+import {
+  ControlErrors,
+  FormControl,
+  FormGroup,
+  Validators,
+  WForm,
+  WFormControl,
+  useFormConfig,
+} from "rectangular-forms";
+import { FormInputDate, FormInputText } from "./FormInput";
+import { useNavigate } from "react-router-dom";
 
 function FormPage() {
-  const { register, handleSubmit } = useForm<User>();
+  const navigate = useNavigate();
 
-  const toast = useRef(null);
-
-  const show = (severity: string, summary: string, detail: string) => {
-    if (toast.current) {
-      //@ts-ignore
-      toast.current.show({
-        severity,
-        summary: summary,
-        detail,
-        life: 3000,
+  const formConfig = useFormConfig({
+    createForm: (data) => {
+      const formGroup = new FormGroup({
+        name: new FormControl(null, [
+          Validators.required,
+          Validators.minLength(3),
+        ]),
+        lastName: new FormControl(null, Validators.required),
+        phone: new FormControl(null, [
+          Validators.required,
+          Validators.pattern(/^\d+$/),
+        ]),
+        email: new FormControl(null, [Validators.required, Validators.email]),
+        date: new FormControl(null, Validators.required),
       });
-    }
-  };
+      formGroup.patchValue(data);
+      return formGroup;
+    },
+    onSubmit: (form) => {
+      if (form.valid) {
+        const user: User = {
+          uuid: uuidv4(),
+          name: form.value.name,
+          lastName: form.value.lastName,
+          phone: form.value.phone,
+          email: form.value.email,
+          date: form.value.date,
+        };
+        addUser(user);
+        localStorage.setItem("lastUser", JSON.stringify(user));
+        console.log("User saved", user);
+        navigate("/table");
+      }
+    },
+  });
 
-  const onSubmit: SubmitHandler<User> = (data) => {
-    if (
-      data.name === "" ||
-      data.lastName === "" ||
-      data.phone === "" ||
-      data.email === "" ||
-      data.date === null
-    ) {
-      show("error", "Error", "All fields are required");
-      return;
-    }
+  const { loadSucceed } = formConfig;
 
-    if (data.phone.length !== 9) {
-      show("error", "Error", "Phone must have 9 digits");
-      return;
-    }
+  useEffect(() => {
+    loadSucceed({});
+  }, [loadSucceed]);
 
-    if (!data.email.includes("@") || !data.email.includes(".")) {
-      show("error", "Error", "Email must have @ and .");
-      return;
-    }
-
-    if (new Date().getFullYear() - data.date.getFullYear() < 18) {
-      show("error", "Error", "You must be at least 18 years old");
-      return;
-    }
-
-    const uuid = uuidv4();
-    const user = { ...data, uuid };
-
-    const previousData = JSON.parse(localStorage.getItem("users") || "[]");
-    localStorage.setItem("users", JSON.stringify([...previousData, user]));
-
-    show("success", "Success", "Form submitted");
-  };
   return (
     <>
       <FormContainer>
-        <StyledForm onSubmit={handleSubmit(onSubmit)}>
-          <InputWrapper>
-            <label htmlFor="name">name:</label>
-            <InputText placeholder={"Pepito"} {...register("name")} />
-          </InputWrapper>
-          <InputWrapper>
-            <label htmlFor="lastName">last name:</label>
-            <InputText placeholder={"Ramirez"} {...register("lastName")} />
-          </InputWrapper>
-          <InputWrapper>
-            <label htmlFor="phone">phone:</label>
-            <InputText placeholder={"999999999"} {...register("phone")} />
-          </InputWrapper>
-          <InputWrapper>
-            <label htmlFor="email">email:</label>
-            <InputText placeholder={"some@email.com"} {...register("email")} />
-          </InputWrapper>
-          <InputWrapper>
-            <label htmlFor="date">date:</label>
-            <Calendar {...register("date")} />
-          </InputWrapper>
+        <StyledWForm formConfig={formConfig}>
+          <StyledWFormControl
+            name="name"
+            errorMessages={{
+              required: "Debes colocar un nombre",
+              minlength: "El nombre debe tener al menos 3 caracteres",
+            }}
+          >
+            <StyledLabel>name:</StyledLabel>
+            <FormInputText placeholder={"Pepito"} />
+            <ControlErrors>
+              {(message) => {
+                return <StyledErrorMessage>{message}</StyledErrorMessage>;
+              }}
+            </ControlErrors>
+          </StyledWFormControl>
+          <StyledWFormControl
+            name="lastName"
+            errorMessages={{ required: "Debes colocar un apellido" }}
+          >
+            <StyledLabel>last name:</StyledLabel>
+            <FormInputText placeholder={"Ramirez"} />
+            <ControlErrors>
+              {(message) => {
+                return <StyledErrorMessage>{message}</StyledErrorMessage>;
+              }}
+            </ControlErrors>
+          </StyledWFormControl>
+          <StyledWFormControl
+            name="phone"
+            errorMessages={{
+              required: "Debes colocar un telefono",
+              pattern: "Debes colocar un telefono valido",
+            }}
+          >
+            <StyledLabel>phone:</StyledLabel>
+            <FormInputText placeholder={"888 888 888"} />
+            <ControlErrors>
+              {(message) => {
+                return <StyledErrorMessage>{message}</StyledErrorMessage>;
+              }}
+            </ControlErrors>
+          </StyledWFormControl>
+          <StyledWFormControl
+            name="email"
+            errorMessages={{
+              required: "Debes colocar un email",
+              email: "Debes colocar un email valido",
+            }}
+          >
+            <StyledLabel>email:</StyledLabel>
+            <FormInputText placeholder={"something@example.com"} />
+            <ControlErrors>
+              {(message) => {
+                return <StyledErrorMessage>{message}</StyledErrorMessage>;
+              }}
+            </ControlErrors>
+          </StyledWFormControl>
+          <StyledWFormControl
+            name="date"
+            errorMessages={{ required: "Debes colocar una fecha" }}
+          >
+            <StyledLabel>birthdate:</StyledLabel>
+            <FormInputDate placeholder={new Date()} />
+            <ControlErrors>
+              {(message) => {
+                return <StyledErrorMessage>{message}</StyledErrorMessage>;
+              }}
+            </ControlErrors>
+          </StyledWFormControl>
           <Button
             style={{ maxWidth: "8rem", margin: "auto" }}
             label="Submit"
             type="submit"
           />
-        </StyledForm>
+        </StyledWForm>
       </FormContainer>
-      <Toast ref={toast} />
     </>
   );
 }
 
-const InputWrapper = styled.div`
+const StyledWFormControl = styled(WFormControl)`
   display: flex;
   flex-direction: column;
   label {
@@ -115,13 +163,26 @@ const FormContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledForm = styled.form`
+const StyledWForm = styled(WForm)`
   padding: 2rem;
   border: 2px solid gray;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+const StyledErrorMessage = styled.p`
+  color: red;
+  font-size: 0.8rem;
+  text-align: center;
+`;
+
+const StyledLabel = styled.label`
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 `;
 
 export default FormPage;

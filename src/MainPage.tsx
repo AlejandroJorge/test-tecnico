@@ -1,55 +1,26 @@
-import { useQuery } from "react-query";
-import { fetchCharacters, type Character } from "./data/character";
+import { useCharacters, type Character } from "./data/character";
 import { Card } from "primereact/card";
 
 import styled from "styled-components";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { useState } from "react";
-import { Button } from "primereact/button";
 
 function MainPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const { isLoading, isError, data, isFetching } = useQuery(
-    ["characters", currentPage],
-    () => fetchCharacters(currentPage),
-    { keepPreviousData: true },
-  );
+  const { data, status } = useCharacters();
 
-  if (isLoading || isFetching)
+  if (status === "PROCESSING")
     return (
       <SpinnerContainer>
         <ProgressSpinner />
       </SpinnerContainer>
     );
 
-  if (isError) return <div>There was an error</div>;
+  if (status === "ERROR") return <div>There was an error</div>;
 
   return (
     <>
       <Container>
-        <StyledPaginationBarContainer>
-          <Button
-            label="Prev"
-            disabled={currentPage <= 1 || isFetching || isLoading}
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-            }}
-          />
-          <span>
-            Current: {currentPage} / {data?.totalPages}
-          </span>
-          <Button
-            label="Next"
-            disabled={
-              currentPage >= data!.totalPages || isFetching || isLoading
-            }
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-            }}
-          />
-        </StyledPaginationBarContainer>
         <ContentContainer>
-          {data?.characters.map((character, idx) => (
+          {data?.characters.map((character: Character, idx: number) => (
             <CharacterCard key={idx} character={character} />
           ))}
         </ContentContainer>

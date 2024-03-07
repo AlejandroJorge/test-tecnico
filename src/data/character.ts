@@ -1,3 +1,7 @@
+import { useAsyncExecutor } from "async-executor-hook";
+import { delay, map, of } from "rxjs";
+import { ajax } from "rxjs/ajax";
+
 interface APICharacter {
   id: number;
   name: string;
@@ -53,6 +57,37 @@ async function fetchCharacters(page: number): Promise<CharactersResponse> {
         }),
       };
     });
+}
+
+export function useCharacters() {
+  const { data, status } = useAsyncExecutor(
+    () => {
+      return ajax.getJSON("https://rickandmortyapi.com/api/character").pipe(
+        delay(1000),
+        map((data: any) => {
+          return {
+            prevLink: data.info.prev,
+            nextLink: data.info.next,
+            totalPages: data.info.pages,
+            characters: data.results.map(
+              (character: APICharacter): Character => {
+                return {
+                  img: character.image,
+                  name: character.name,
+                  status: character.status,
+                  species: character.species,
+                  type: character.type,
+                };
+              },
+            ),
+          };
+        }),
+      );
+    },
+    { source$: of({}) },
+  );
+
+  return { data, status };
 }
 
 export type { Character };
